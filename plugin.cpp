@@ -51,8 +51,8 @@ VVCTRE_PLUGIN_EXPORT void PluginLoaded(void* core, void* plugin_manager,
 
     g_plugin_manager = plugin_manager;
 
-    // F4
-    g_toggle_pause = vvctre_button_device_new(plugin_manager, "engine:keyboard,code:61");
+    // F8
+    g_toggle_pause = vvctre_button_device_new(plugin_manager, "engine:keyboard,code:65");
 }
 
 VVCTRE_PLUGIN_EXPORT void BeforeDrawingFPS() {
