@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [windows-2019, ubuntu-18.04]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            cl.exe //LD //Fe:${{github.event.repository.name}}.dll plugin.c
+          else
+            g++ plugin.cpp -shared -o ${{github.event.repository.name}}.so -fPIC
+          fi
+      - name: Prepare to upload
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE
+          export VERSION=${GITHUB_REF:10}
+          echo ::set-env name=VERSION::$VERSION
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            7z a ${{github.event.repository.name}}-$VERSION-${{runner.os}}.7z ${{github.event.repository.name}}.dll license.txt
+          else
+            7z a ${{github.event.repository.name}}-$VERSION-${{runner.os}}.7z ${{github.event.repository.name}}.so license.txt
+          fi
+      - name: Upload to GitHub Releases
+        if: github.event_name == 'push'
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{secrets.GITHUB_TOKEN}}
+          file: ${{github.event.repository.name}}-${{env.VERSION}}-${{runner.os}}.7z
+          asset_name: ${{github.event.repository.name}}-${{env.VERSION}}-${{runner.os}}.7z
+          tag: ${{github.ref}}
+          overwrite: true
+      - name: Upload artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{github.event.repository.name}}-${{runner.os}}
+          path: .
