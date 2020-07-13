@@ -3,7 +3,6 @@
 // Refer to the license.txt file included.
 
 #include <cstdint>
-#include "common_types.h"
 
 #ifdef _WIN32
 #define VVCTRE_PLUGIN_EXPORT extern "C" __declspec(dllexport)
