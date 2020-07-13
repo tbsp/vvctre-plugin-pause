@@ -2,8 +2,6 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
-#include <cstdint>
-
 #ifdef _WIN32
 #define VVCTRE_PLUGIN_EXPORT extern "C" __declspec(dllexport)
 #else
