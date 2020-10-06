@@ -33,7 +33,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           export VERSION=${GITHUB_REF:10}
-          echo ::set-env name=VERSION::$VERSION
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           if [ "$RUNNER_OS" == "Windows" ]; then
             7z a ${{github.event.repository.name}}-$VERSION-${{runner.os}}.7z ${{github.event.repository.name}}.dll license.txt
           else
